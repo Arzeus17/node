@@ -1,17 +1,25 @@
 // adiciono o express
 const express = require('express')
-//const { Sequelize, DataTypes } = require('sequelize')
-//const Task = require('./models/task')
+//importamos o sequelize
+const { Sequelize, DataTypes } = require('sequelize')
+//importamos modelo da tarefa creado por sequelize
+const Task = require('./models/task')
 
 const app = express()
-//const sequelize = new Sequelize({ dialect: 'sqlite', storage: './task-list.db' })
-//const tasks = Task(sequelize, DataTypes)
+//façemos a conexao com o banco de dados
+const sequelize = new Sequelize({ 
+    dialect: 'sqlite', 
+    storage: './task-list.db' 
+})
+
+//pasamos a conexao e os tipos de dados
+const tasks = Task(sequelize, DataTypes)
 
 // We need to parse JSON coming from requests
 app.use(express.json())
 
 //façemos a lista de tarefas
-app.get('/tasks', (req, res) => {
+app.get('/tasks/:id', (req, res) => {
   res.json({ action: 'Listando tarefas' })
 })
 
