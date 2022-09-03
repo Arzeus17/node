@@ -9,7 +9,7 @@ const app = express()
 //façemos a conexao com o banco de dados
 const sequelize = new Sequelize({ 
     dialect: 'sqlite', 
-    storage: './task-list.db' 
+    storage: 'task-list.db' 
 })
 
 //pasamos a conexao e os tipos de dados
@@ -19,38 +19,30 @@ const tasks = Task(sequelize, DataTypes)
 app.use(express.json())
 
 //façemos a lista de tarefas
-app.get('/tasks/:id', (req, res) => {
-  res.json({ action: 'Listando tarefas' })
+app.get('/tasks/', async (req, res) => {
+    const allTasks = await tasks.findAll()
+  res.json({ allTasks })
 })
 
-// Crear uma tarefa
-app.post('/tasks', (req, res) => {
-  const body = req.body
+// Crear uma tarefa //para crear un nuevo registro dentro da tabela
+app.post('/tasks', async (req, res) => {
+    const newReg = await tasks.create({"name": "Geología"})
+    res.json({ newReg })
+    })
 
-  res.json(body)
+//Atualizar tarefas //para atualizar um registro, depois de encontrar a chave primaria
+app.put('/tasks/:id', async (req, res) => {
+    const upReg = await tasks.findByPk(9)
+    upReg.update({"name": "Biología"})
+    res.json({ upReg })
 })
 
-//Mostrar uma tarefa
-app.get('/tasks/:id', (req, res) => {
-  const taskId = req.params.id
-
-  res.send({ action: 'Mostrando uma tarefa', taskId: taskId })
+//Apagar tarefas //para deletar um item de nossa tabela
+app.delete('/tasks/:id', async (req, res) => {
+    const delReg = await tasks.destroy({where: {id:11,}})
+    res.json({ delReg })
 })
-
-//Atualizar tarefas
-app.put('/tasks/:id', (req, res) => {
-  const taskId = req.params.id
-
-  res.send({ action: 'Atualizando tarefas', taskId: taskId })
-})
-
-//Apagar tarefas
-app.delete('/tasks/:id', (req, res) => {
-  const taskId = req.params.id
-
-  res.send({ action: 'Apagando tarefas', taskId: taskId })
-})
-
+  
 app.listen(3000, () => {
   console.log('Iniciando o servidor ExpressJS na porta 3000')
 })
